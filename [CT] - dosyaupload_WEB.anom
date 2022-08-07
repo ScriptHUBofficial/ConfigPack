@@ -1,0 +1,101 @@
+[SETTINGS]
+{
+  "Name": "dosyaupload.com Link Bulucu Config",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-06-04T14:03:45.7025038+03:00",
+  "AdditionalInfo": "",
+  "Author": "SCRİPTHUB",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#C1_URL REQUEST GET "https://www.dosyaupload.com/" 
+  
+  HEADER "sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"102\", \"Google Chrome\";v=\"102\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+  HEADER "sec-fetch-dest: document" 
+  HEADER "sec-fetch-mode: navigate" 
+  HEADER "sec-fetch-site: none" 
+  HEADER "sec-fetch-user: ?1" 
+  HEADER "upgrade-insecure-requests: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36" 
+
+#C1 PARSE "<COOKIES(filehosting)>" LR "" "" -> VAR "c1" 
+
+#Random_Link FUNCTION Constant "?d?d?l?d?d" -> CAP "url" 
+
+#Login REQUEST GET "https://www.dosyaupload.com/<url>" 
+  
+  HEADER "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+  HEADER "cache-control: max-age=0" 
+  HEADER "sec-ch-ua: \" Not A;Brand\";v=\"99\", \"Chromium\";v=\"102\", \"Google Chrome\";v=\"102\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "sec-ch-ua-platform: \"Windows\"" 
+  HEADER "sec-fetch-dest: document" 
+  HEADER "sec-fetch-mode: navigate" 
+  HEADER "sec-fetch-site: none" 
+  HEADER "sec-fetch-user: ?1" 
+  HEADER "upgrade-insecure-requests: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36" 
+
+#Doğrulama KEYCHECK 
+  KEYCHAIN Retry OR 
+    KEY "<RESPONSECODE>" Contains "404" 
+    KEY "Dosya silindi." 
+    KEY "ERROR: No packages found, please contact the support team. (at least 1 package needs to have the option of 'On Upgrade Page' to 'Yes' with 'Package Type' of 'Paid')" 
+  KEYCHAIN Success OR 
+    KEY "Dosya Adı:" 
+    KEY "Dosya Boyutu:" 
+
+#Cap PARSE "<SOURCE>" LR "<td class=\"responsiveInfoTable\">" "<br />" -> VAR "Dosya Adı" 
+
+#Cap_Fix FUNCTION Replace "Dosya Adı: " "" "<Dosya Adı>" -> CAP "Dosya Adı" 
+
+#Cap PARSE "<SOURCE>" LR "<br />" "</td>" -> VAR "Dosya Boyutu" 
+
+#Cap_Fix FUNCTION Replace "Dosya Boyutu: " "" "<Dosya Boyutu>" -> CAP "Dosya Boyutu" 
+

